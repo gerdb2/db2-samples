@@ -7,4 +7,4 @@ export RUST_LOG=info
 export RUST_BACKTRACE=full
 
 cargo build --release --target-dir /tmp/db2binmain;
-/usr/bin/time cargo run --release --target-dir /tmp/db2binmain --;
+cargo run --release --target-dir /tmp/db2binmain --;
