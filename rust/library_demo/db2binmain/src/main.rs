@@ -7,12 +7,13 @@ SPDX-License-Identifier: Apache-2.0
 //! Rust demo for SAMPLE database
 //!
 //! ## Configuration
-//! Database credentials must be provided via environment variables or a `.env` file:
+//! Database credentials must be provided via environment variables or in a .env file:
 //! - `DB2_DSN` - Database DSN (e.g., "dsn_db2samples")
 //! - `DB2_USER` - Database username
 //! - `DB2_PWD` - Database password
 //!
 //! ## Usage
+//!
 //! ```bash
 //! # Set environment variables
 //! export DB2_DSN="dsn_proxpdb2"
@@ -25,21 +26,18 @@ SPDX-License-Identifier: Apache-2.0
 //! echo "DB2_PWD=your_password" >> .env
 //!
 //! # Run the program
-//! ./db2binmain
+//! ./db2binmain_run.sh
 //!
 //! ```
 
 use anyhow::{Context, Result};
-// use clap::Parser;
 use fs2::FileExt;
-// use log::{debug, error, info, warn};
 use log::{debug, error, info};
-// use std::collections::HashMap;
 use std::env;
 use std::path::Path;
 
 use db2libadmin;
-// to be included later:
+// placeholder for more sample code (in development)
 // use db2libimpload;
 
 /// Constants
