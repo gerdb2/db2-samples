@@ -28,7 +28,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // export DB2_DSN="dsn_db2samples";
     // export DB2_USER="db2luw1";
     // export DB2_PWD="db2lUw1";
-    //
+
     let db2_dsn = std::env::var("DB2_DSN").context("DB2_DSN environment variable not set")?;
     let db2_user = std::env::var("DB2_USER").context("DB2_USER environment variable not set")?;
     let db2_pwd = std::env::var("DB2_PWD").context("DB2_PWD environment variable not set")?;
