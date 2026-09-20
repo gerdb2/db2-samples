@@ -7,10 +7,12 @@ SPDX-License-Identifier: Apache-2.0
 //! Rust demo for SAMPLE database
 //!
 //! ## Configuration
-//! Database credentials must be provided via environment variables or in a .env file:
+//! Database credentials as well as a schema must be provided via environment variables or in a .env file:
 //! - `DB2_DSN` - Database DSN (e.g., "dsn_db2samples")
 //! - `DB2_USER` - Database username
 //! - `DB2_PWD` - Database password
+//! - `DB2_SCHEMA` - Database schema
+//! 
 //!
 //! ## Usage
 //!
@@ -19,11 +21,13 @@ SPDX-License-Identifier: Apache-2.0
 //! export DB2_DSN="dsn_proxpdb2"
 //! export DB2_USER="db2luw1"
 //! export DB2_PWD="your_password"
+//! export DB2_SCHEMA="your_schema"
 //!
 //! # Or use a .env file
 //! echo "DB2_DSN=dsn_proxpdb2" >> .env
 //! echo "DB2_USER=db2luw1" >> .env
 //! echo "DB2_PWD=your_password" >> .env
+//! echo "DB2_SCHEMA=your_schema" >> .env
 //!
 //! # Run the program
 //! ./db2binmain_run.sh
@@ -48,6 +52,7 @@ const LOCK_FILE: &str = "db2binmain.lock";
 struct DbConfig {
     dsn: String,
     user: String,
+    schema: String,
     password: String,
 }
 
@@ -59,6 +64,7 @@ impl std::fmt::Debug for DbConfig {
         f.debug_struct("DbConfig")
             .field("dsn", &self.dsn)
             .field("user", &self.user)
+            .field("schema", &self.schema)
             .field("password", &"***")
             .finish()
     }
@@ -78,6 +84,10 @@ impl DbConfig {
             "DB2_USER environment variable not set. Please set it or create a .env file.",
         )?;
 
+        let schema = env::var("DB2_SCHEMA").context(
+            "DB2_SCHEMA environment variable not set. Please set it or create a .env file.",
+        )?;
+
         let password = env::var("DB2_PWD").context(
             "DB2_PWD environment variable not set. Please set it or create a .env file.",
         )?;
@@ -88,15 +98,15 @@ impl DbConfig {
         Ok(DbConfig {
             dsn,
             user,
+            schema,
             password,
         })
     }
 }
 
 fn run() -> Result<i32> {
-    // Constants
-    const DB2_INSTANCE_USER: &str = "db2luw1";
-    const SCHEMA: &str = "db2luw1";
+    let db_config = DbConfig::from_env()
+        .context("Failed to load database configuration. See error above for details.")?;
 
     // Initialize logging
     env_logger::init();
@@ -111,7 +121,7 @@ fn run() -> Result<i32> {
     // the same secret -- forgetting DB2_PWD aborted the run even though
     // DB2_PWD (the only var documented above) was set correctly.
 
-    match db2libadmin::check_db2_instance_owner(DB2_INSTANCE_USER) {
+    match db2libadmin::check_db2_instance_owner(&db_config.user) {
         Ok(true) => {
             info!("Db2 instance owner check passed. Continuing...");
         }
@@ -121,15 +131,12 @@ fn run() -> Result<i32> {
         Err(err) => {
             error!(
                 "Failed to check if Db2 instance is running for {}: {}",
-                DB2_INSTANCE_USER,
+                &db_config.user,
                 err
             );
             return Ok(3);
         }
     }
-    let db_config = DbConfig::from_env()
-        .context("Failed to load database configuration. See error above for details.")?;
-
     // One connection, opened once and reused for every sequential DB2 call
     // made on the main thread below, instead of each db2libgen call paying
     // its own ODBC driver-manager init + network handshake + auth round
@@ -175,7 +182,7 @@ fn run() -> Result<i32> {
     info!("Starting Rust demo processing pipeline");
     //    debug!("Arguments: {:?}", args);
 
-    db2libadmin::check_for_table_status(&conn, SCHEMA, "employee", &mut table_status)
+    db2libadmin::check_for_table_status(&conn, &db_config.schema, "employee", &mut table_status)
         .context("Failed to ensure sufficient table status from database")?;
 
     match table_status {

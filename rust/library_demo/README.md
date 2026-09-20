@@ -1,6 +1,6 @@
 # Overview
 
-This Rust workspace demonstates the use of certain Db2 commands in Rust. These commands are separated into two libraries, which can be re-used and adopted in other Rust projects.
+This Rust workspace demonstrates the use of certain Db2 commands in Rust. These commands are separated into two libraries, which can be re-used and adopted in other Rust projects.
 
 ## Directory *db2libadmin*
 
@@ -23,4 +23,4 @@ Directory *db2libimpload* contains a Rust file named *lib.rs, currently implemen
 
 ## Directory *db2main*
 
-Directory *db2main* conatins the *main.rs* file which is compiled to an executable. It accesses varies methods from aforementioned libraries.
+Directory *db2binmain* conatins the *main.rs* file which is compiled to an executable. It accesses various methods from the aforementioned libraries.
