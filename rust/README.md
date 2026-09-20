@@ -4,7 +4,7 @@
 # Rust Sample Code - Public Function Summary
 
 Summary of all `pub fn` items found in the `.rs` files under
-[`gerdb2/db2-samples/rust`](https://github.com/ibm/db2-samples/tree/master/rust).
+[`ibm/db2-samples/rust`](https://github.com/ibm/db2-samples/tree/master/rust).
 
 The `rust/basic_demo` files (`main.rs`, `main_parameter_markers.rs`,
 `main_sp_udf.rs`) contain only a private `fn main()` and expose no `pub fn`
